@@ -13,9 +13,9 @@ import { useState } from 'react';
 import UpdateStatusConfirm from './UpdateStatusConfirm';
 import axios from 'axios';
 
-export function CustomTable({tableBody,activeStatus}) {
+export function CustomTable({ tableBody, activeStatus, fetchOrders }) {
   const [open, setOpen] = useState(false);
-  const [selectRow,setSelecteRow] = useState();
+  const [selectRow, setSelecteRow] = useState();
 
   const handleOpenDialog = (data) => {
     setOpen(true); // 다이얼로그 열기
@@ -25,20 +25,31 @@ export function CustomTable({tableBody,activeStatus}) {
   const handleCloseDialog = () => {
     setOpen(false); // 다이얼로그 닫기
   };
-
+  const totalSum = tableBody?.reduce((sum, row) => sum + row.totalPrice, 0);
   const updateStatus = async () => {
-    // activeStatus 변수에 의해서 status값을 자동으로 치환한다.
-    const vaildStatus = activeStatus === '주문요청' ? 'pending' : activeStatus === '주문대기중' ? 'complete' : 'place';
-    const payload = {
-      id: selectRow.id,
-      status: vaildStatus,
-    };
-    console.log(selectRow);
-    
-    const res = await axios.put('/api/order',payload)
-    console.log(res);
-    
-  }
+    try {
+      // activeStatus 변수에 의해서 status값을 자동으로 치환한다.
+      const vaildStatus =
+        activeStatus === '주문요청'
+          ? 'pending'
+          : activeStatus === '주문대기중'
+          ? 'complete'
+          : 'place';
+      const payload = {
+        id: selectRow.id,
+        status: vaildStatus,
+      };
+      console.log(selectRow);
+
+      const res = await axios.put('/api/order', payload);
+      console.log(res);
+      if (res) {
+        fetchOrders();
+      }
+    } catch (error) {
+      
+    }
+  };
   return (
     <Table>
       <TableCaption>와플 {activeStatus} 내역입니다.</TableCaption>
@@ -60,7 +71,7 @@ export function CustomTable({tableBody,activeStatus}) {
             onClick={() => {
               if (activeStatus !== '주문완료') {
                 handleOpenDialog(row);
-              } 
+              }
             }}
             className={activeStatus !== '주문완료' && 'cursor-pointer'}
           >
@@ -74,12 +85,14 @@ export function CustomTable({tableBody,activeStatus}) {
           </TableRow>
         ))}
       </TableBody>
-      <TableFooter>
-        <TableRow>
-          <TableCell colSpan={6}>Total</TableCell>
-          <TableCell className="text-right">$2,500.00</TableCell>
-        </TableRow>
-      </TableFooter>
+      {activeStatus === '주문완료' && (
+        <TableFooter>
+          <TableRow>
+            <TableCell colSpan={6}>Total</TableCell>
+            <TableCell className="text-right">{totalSum}원</TableCell>
+          </TableRow>
+        </TableFooter>
+      )}
       {open && (
         <UpdateStatusConfirm
           open={open}

@@ -1,30 +1,53 @@
 // app/api/order/route.js
 import { supabase } from '@/lib/supabase'; // Supabase 클라이언트를 가져옵니다.
 import { NextRequest, NextResponse } from 'next/server';
-export async function GET(req, res) {
+export async function GET(req) {
   try {
-    const { data, error, status, statusText } = await supabase
-      .from('order')
-      .select('*');
-    if (error) {
-      return NextResponse.json({ status, msg: statusText });
+    const { searchParams } = new URL(req.url);
+    const status = searchParams.get('status'); // 쿼리에서 status 가져오기
+    const date = searchParams.get('date'); // 쿼리에서 date 가져오기
+
+    // supabase 쿼리 빌드
+    let query = supabase.from('order').select('*');
+
+    // status 필터링 적용
+    if (status) {
+      query = query.eq('status', status);
     }
-    console.log(data);
+
+    // 날짜 필터링 적용 (created_at 날짜가 쿼리의 날짜와 같은지 확인)
+    if (date) {
+      query = query
+        .gte('created_at', `${date} 00:00:00`)
+        .lte('created_at', `${date} 23:59:59`);
+    }
+
+    // 데이터 가져오기
+    const { data, error, status: dbStatus, statusText } = await query;
+
+    if (error) {
+      return NextResponse.json({ status: dbStatus, msg: statusText });
+    }
 
     // Convert the created_at field to KST (Korean Standard Time)
     const updatedData = data.map((order) => {
-      const date = new Date(order.created_at);
-      const kstDate = new Date(date.getTime() + 9 * 60 * 60 * 1000); // Convert UTC to KST
+      const utcDate = new Date(order.created_at);
+      const kstDate = new Date(utcDate.getTime() + 9 * 60 * 60 * 1000); // UTC -> KST 변환
       order.created_at = kstDate
         .toISOString()
         .replace('T', ' ')
-        .substring(0, 19); // Format to 'YYYY-MM-DD HH:MM:SS'
+        .substring(0, 19); // 'YYYY-MM-DD HH:MM:SS' 형식으로 변환
       return order;
     });
 
     return NextResponse.json(updatedData);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    return new NextResponse(JSON.stringify({ error: err.message }), {
+      status: 500,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
   }
 }
 

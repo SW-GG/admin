@@ -7,14 +7,26 @@ import { useEffect, useState } from 'react';
 
 export default function Home() {
   const [activeButton, setActiveButton] = useState('주문요청');
-  const [tableData, setTableData] = useState();
-
-  // 한국 시간 기준의 today 값 설정
-  const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD 포맷
+  const [tableData, setTableData] = useState([]);
+  const [selectedDate, setSelectedDate] = useState(
+    new Date().toISOString().split('T')[0]
+  ); // YYYY-MM-DD 포맷
 
   const fetchOrders = async () => {
     try {
-      const res = await axios.get('/api/order');
+      const res = await axios.get('/api/order', {
+        params: {
+          status:
+            activeButton === '주문요청'
+              ? 'place'
+              : activeButton === '주문대기중'
+              ? 'pending'
+              : activeButton === '주문완료'
+              ? 'complete'
+              : 'place',
+          date: selectedDate,
+        },
+      });
       if (res) {
         setTableData(res.data);
       }
@@ -25,10 +37,14 @@ export default function Home() {
 
   useEffect(() => {
     fetchOrders();
-  }, []);
+  }, [activeButton, selectedDate]); // 날짜나 버튼이 바뀌면 데이터 다시 가져오기
 
   const handleButtonClick = (buttonType) => {
     setActiveButton(buttonType);
+  };
+
+  const handleDateChange = (newDate) => {
+    setSelectedDate(newDate); // 날짜가 바뀌면 상태 업데이트
   };
 
   return (
@@ -71,12 +87,18 @@ export default function Home() {
           주문완료
         </button>
       </div>
+
+      {/* DatePicker */}
       <div className="pt-16">
-        {/* today 값을 DatePickerDemo에 전달 */}
-        <DatePickerDemo initialDate={today} />
+        <DatePickerDemo
+          initialDate={selectedDate}
+          onDateChange={handleDateChange}
+        />
       </div>
+
+      {/* Table */}
       <div className="pt-8">
-        <CustomTable tableBody={tableData} activeStatus={activeButton} />
+        <CustomTable tableBody={tableData} activeStatus={activeButton} fetchOrders={fetchOrders}/>
       </div>
     </div>
   );
