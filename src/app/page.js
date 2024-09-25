@@ -67,8 +67,8 @@ export default function Home() {
           주문완료
         </button>
       </div>
-      <div className='pt-8'>
-        <CustomTable tableBody={tableData}/>
+      <div className="pt-8">
+        <CustomTable tableBody={tableData} activeStatus={activeButton} />
       </div>
     </div>
   );
