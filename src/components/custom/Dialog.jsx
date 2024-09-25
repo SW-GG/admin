@@ -14,6 +14,7 @@ import { Label } from '@/components/ui/label';
 import CustomConfirm from './Confirm';
 import { useEffect, useState } from 'react';
 import { Textarea } from '@/components/ui/textarea';
+import axios from 'axios';
 
 const CustomDialog = () => {
   const [waffleCount, setWaffleCount] = useState({
@@ -22,7 +23,6 @@ const CustomDialog = () => {
   });
 
   const [orderDetails, setOrderDetails] = useState({
-    orderNumber: '',
     customerPhoneNumber: '',
     memo: '',
   });
@@ -52,27 +52,25 @@ const CustomDialog = () => {
 
   // 주문 데이터 전송 함수
   const handleSubmit = async () => {
-    const orderData = {
-      orderNumber: orderDetails.orderNumber,
-      customerPhoneNumber: orderDetails.customerPhoneNumber,
-      basicWaffleCount: waffleCount.basic,
-      chocoWaffleCount: waffleCount.choco,
-      memo: orderDetails.memo || '', // Optional
-      totalPrice,
-    };
+    try {
+      const orderData = {
+        phoneNumber: orderDetails.customerPhoneNumber,
+        basicWaffleCount: waffleCount.basic,
+        chocoWaffleCount: waffleCount.choco,
+        memo: orderDetails.memo || '', // Optional
+        totalPrice,
+        status: 'place'
+      };
 
-    // Send orderData to the server
-    console.log('Sending order data:', orderData);
-
-    // Here you can use fetch or axios to send the data to your server
-    // Example:
-    // await fetch('/api/order', {
-    //   method: 'POST',
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //   },
-    //   body: JSON.stringify(orderData),
-    // });
+      // Send orderData to the server
+      console.log('Sending order data:', orderData);
+      const res = await axios.post('/api/order', orderData);
+      console.log(res);
+      
+    } catch (error) {
+      console.log(error);
+      
+    }
   };
 
   return (
@@ -158,7 +156,7 @@ const CustomDialog = () => {
           <div className="text-lg font-semibold">
             총 금액: {totalPrice.toLocaleString()} 원
           </div>
-          <CustomConfirm title={'주문요청전송'} />
+          <CustomConfirm title={'주문요청전송'} handleSubmit={handleSubmit} />
         </DialogFooter>
       </DialogContent>
     </Dialog>

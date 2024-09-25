@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 
-const CustomConfirm = ({title}) => {
+const CustomConfirm = ({ title, handleSubmit }) => {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
@@ -26,11 +26,11 @@ const CustomConfirm = ({title}) => {
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>취소</AlertDialogCancel>
-          <AlertDialogAction>확인</AlertDialogAction>
+          <AlertDialogAction onClick={handleSubmit}>확인</AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
   );
-}
+};
 
 export default CustomConfirm
