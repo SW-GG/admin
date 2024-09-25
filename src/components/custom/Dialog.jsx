@@ -165,7 +165,7 @@ const CustomDialog = () => {
           </div>
         </div>
         <Textarea
-          placeholder="요청사항이 있다면 작성해주세요."
+          placeholder="요청사항(선택)"
           value={orderDetails.memo}
           onChange={(e) =>
             setOrderDetails({ ...orderDetails, memo: e.target.value })

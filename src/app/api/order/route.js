@@ -3,14 +3,12 @@ import { supabase } from '@/lib/supabase'; // Supabase 클라이언트를 가져
 import { NextRequest, NextResponse } from 'next/server';
 export async function GET(req, res) {
   try {
-    const data = await supabase.from('orders').select('*');
-    // if (error) throw error;
-    console.log(res,data);
-    return NextResponse.json([
-      { id: 1, name: 'a' },
-      { id: 2, name: 'b' },
-    ]);
-    res.status(200).json(data);
+    const {data,error,status,statusText} = await supabase.from('order').select('*');
+    if(error) {
+      return NextResponse.json({status,msg:statusText})
+    }
+    return NextResponse.json(data)
+    
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
