@@ -1,6 +1,22 @@
+"use client"
 import CustomDialog from '@/components/custom/Dialog';
+import axios from 'axios';
+import { useEffect } from 'react';
 
 export default function Home() {
+  const fetchOrders = async () => {
+    try {
+      const res = await axios.get('/api/order')
+      console.log(res);
+      
+    } catch (error) {
+      
+    }
+  };
+
+  useEffect(() => {
+    fetchOrders();
+  }, []);
   return (
     <div className="p-8 bg-background min-h-screen">
       {/* Dialog */}
