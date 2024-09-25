@@ -89,23 +89,6 @@ const CustomDialog = () => {
         </DialogHeader>
         <div className="grid gap-4 py-4">
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="name" className="text-right">
-              주문번호
-            </Label>
-            <Input
-              id="name"
-              placeholder="1"
-              className="col-span-3"
-              value={orderDetails.orderNumber}
-              onChange={(e) =>
-                setOrderDetails({
-                  ...orderDetails,
-                  orderNumber: e.target.value,
-                })
-              }
-            />
-          </div>
-          <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="username" className="text-right">
               주문자 전화번호
             </Label>
@@ -175,7 +158,7 @@ const CustomDialog = () => {
           <div className="text-lg font-semibold">
             총 금액: {totalPrice.toLocaleString()} 원
           </div>
-          <Button onClick={handleSubmit}>주문 요청 전송</Button>
+          <CustomConfirm title={'주문요청전송'} />
         </DialogFooter>
       </DialogContent>
     </Dialog>
