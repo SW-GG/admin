@@ -1,4 +1,5 @@
 'use client';
+import { DatePickerDemo } from '@/components/custom/DatePicker';
 import CustomDialog from '@/components/custom/Dialog';
 import { CustomTable } from '@/components/custom/Table';
 import axios from 'axios';
@@ -6,13 +7,16 @@ import { useEffect, useState } from 'react';
 
 export default function Home() {
   const [activeButton, setActiveButton] = useState('주문요청');
-  const [tableData,setTableData] = useState();
+  const [tableData, setTableData] = useState();
+
+  // 한국 시간 기준의 today 값 설정
+  const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD 포맷
+
   const fetchOrders = async () => {
     try {
       const res = await axios.get('/api/order');
-      console.log(res);
-      if(res) {
-        setTableData(res.data)
+      if (res) {
+        setTableData(res.data);
       }
     } catch (error) {
       console.error(error);
@@ -66,6 +70,10 @@ export default function Home() {
         >
           주문완료
         </button>
+      </div>
+      <div className="pt-16">
+        {/* today 값을 DatePickerDemo에 전달 */}
+        <DatePickerDemo initialDate={today} />
       </div>
       <div className="pt-8">
         <CustomTable tableBody={tableData} activeStatus={activeButton} />
