@@ -26,7 +26,7 @@ const CustomDialog = () => {
     customerPhoneNumber: '',
     memo: '',
   });
-
+  
   // 와플 가격 (기본: 3000원, 초코: 3500원)
   const WAFFLE_PRICES = {
     basic: 3000,
@@ -78,7 +78,7 @@ const CustomDialog = () => {
       <DialogTrigger asChild>
         <Button variant="outline">주문요청작성하기</Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[768px]">
+      <DialogContent className="sm:max-w-[486px]">
         <DialogHeader>
           <DialogTitle>주문요청</DialogTitle>
           <DialogDescription>

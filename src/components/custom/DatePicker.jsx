@@ -20,9 +20,17 @@ export function DatePickerDemo({ initialDate, onDateChange }) {
 
   const handleDateChange = (selectedDate) => {
     setDate(selectedDate);
-    const formattedDate = selectedDate.toISOString().split('T')[0]; // YYYY-MM-DD 형식
+    const formattedDate = selectedDate
+      .toLocaleDateString('ko-KR', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+      })
+      .replace(/. /g, '-')
+      .replace('.', ''); // YYYY-MM-DD 형식
     onDateChange(formattedDate); // 부모 컴포넌트로 전달
   };
+
 
   return (
     <Popover>
@@ -35,7 +43,12 @@ export function DatePickerDemo({ initialDate, onDateChange }) {
           )}
         >
           <CalendarIcon className="mr-2 h-4 w-4" />
-          {date ? format(date, 'PPP') : <span>Pick a date</span>}
+          {date ? (
+            format(date, 'PPP', { locale: ko })
+          ) : (
+            <span>날짜를 선택하세요</span>
+          )}{' '}
+          {/* 한국어 날짜 포맷 */}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0" align="start">
@@ -44,9 +57,9 @@ export function DatePickerDemo({ initialDate, onDateChange }) {
           selected={date}
           onSelect={handleDateChange}
           initialFocus
+          locale={ko} // 달력에 한국어 로케일 적용
         />
       </PopoverContent>
     </Popover>
   );
 }
-

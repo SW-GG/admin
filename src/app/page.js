@@ -3,16 +3,27 @@ import { DatePickerDemo } from '@/components/custom/DatePicker';
 import CustomDialog from '@/components/custom/Dialog';
 import { CustomTable } from '@/components/custom/Table';
 import axios from 'axios';
+import Image from 'next/image';
 import { useEffect, useState } from 'react';
+import { PulseLoader, RingLoader } from 'react-spinners';
 
 export default function Home() {
   const [activeButton, setActiveButton] = useState('주문요청');
   const [tableData, setTableData] = useState([]);
   const [selectedDate, setSelectedDate] = useState(
-    new Date().toISOString().split('T')[0]
-  ); // YYYY-MM-DD 포맷
+    new Date()
+      .toLocaleDateString('ko-KR', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+      })
+      .replace(/. /g, '-')
+      .replace('.', '') // YYYY-MM-DD 형식
+  );
 
+  const [isLoading, setIsLoading] = useState(false);
   const fetchOrders = async () => {
+    setIsLoading(true);
     try {
       const res = await axios.get('/api/order', {
         params: {
@@ -32,6 +43,8 @@ export default function Home() {
       }
     } catch (error) {
       console.error(error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -97,9 +110,38 @@ export default function Home() {
       </div>
 
       {/* Table */}
-      <div className="pt-8">
-        <CustomTable tableBody={tableData} activeStatus={activeButton} fetchOrders={fetchOrders}/>
-      </div>
+      {isLoading && (
+        <div class="flex justify-center h-screen">
+          <div className="text-center">
+            <PulseLoader />
+          </div>
+        </div>
+      )}
+      {!isLoading && tableData?.length > 0 && (
+        <div className="pt-8">
+          <CustomTable
+            tableBody={tableData}
+            activeStatus={activeButton}
+            fetchOrders={fetchOrders}
+          />
+        </div>
+      )}
+      {/* 데이터가 없을 경우 */}
+      {tableData?.length === 0 && (
+        <div class="flex justify-center h-screen pt-8">
+          <div className="text-center">
+            <Image
+              src="https://sw-gg.github.io/static-image/no-waffle.webp"
+              alt="waffle"
+              width={360}
+              height={360}
+            />
+            <p className="mt-6 text-2xl font-bold text-gray-800">
+              {activeButton} 와플 내역이 없어요
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
