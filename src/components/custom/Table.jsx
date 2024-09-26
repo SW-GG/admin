@@ -12,11 +12,13 @@ import { useState } from 'react';
 
 import UpdateStatusConfirm from './UpdateStatusConfirm';
 import axios from 'axios';
+import { useToast } from '@/hooks/use-toast';
+import { title } from 'process';
 
 export function CustomTable({ tableBody, activeStatus, fetchOrders }) {
   const [open, setOpen] = useState(false);
   const [selectRow, setSelecteRow] = useState();
-
+  const {toast} = useToast()
   const handleOpenDialog = (data) => {
     setOpen(true); // 다이얼로그 열기
     setSelecteRow(data);
@@ -45,6 +47,9 @@ export function CustomTable({ tableBody, activeStatus, fetchOrders }) {
       console.log(res);
       if (res) {
         fetchOrders();
+        toast({
+          title: '주문 상태 변경 완료!'
+        });
       }
     } catch (error) {
       

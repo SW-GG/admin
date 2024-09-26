@@ -1,6 +1,7 @@
 'use client';
 import { DatePickerDemo } from '@/components/custom/DatePicker';
 import CustomDialog from '@/components/custom/Dialog';
+import { PaginationDemo } from '@/components/custom/Pagination';
 import { CustomTable } from '@/components/custom/Table';
 import axios from 'axios';
 import Image from 'next/image';
@@ -64,7 +65,7 @@ export default function Home() {
     <div className="p-8 bg-background min-h-screen">
       {/* Dialog */}
       <div className="flex justify-center">
-        <CustomDialog />
+        <CustomDialog fetchOrders ={fetchOrders}/>
       </div>
 
       {/* Flexbox section */}
@@ -124,6 +125,7 @@ export default function Home() {
             activeStatus={activeButton}
             fetchOrders={fetchOrders}
           />
+          <PaginationDemo totalItems={tableData?.length} itemsPerPage={1} />
         </div>
       )}
       {/* 데이터가 없을 경우 */}

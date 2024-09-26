@@ -15,8 +15,12 @@ import CustomConfirm from './Confirm';
 import { useEffect, useState } from 'react';
 import { Textarea } from '@/components/ui/textarea';
 import axios from 'axios';
+import { useToast } from '@/hooks/use-toast';
+import { title } from 'process';
 
-const CustomDialog = () => {
+const CustomDialog = ({ fetchOrders }) => {
+  const {toast} = useToast()
+  const [open, setOpen] = useState(false); // Manage dialog open state
   const [waffleCount, setWaffleCount] = useState({
     basic: 0,
     choco: 0,
@@ -26,7 +30,7 @@ const CustomDialog = () => {
     customerPhoneNumber: '',
     memo: '',
   });
-  
+
   // 와플 가격 (기본: 3000원, 초코: 3500원)
   const WAFFLE_PRICES = {
     basic: 3000,
@@ -59,22 +63,31 @@ const CustomDialog = () => {
         chocoWaffleCount: waffleCount.choco,
         memo: orderDetails.memo || '', // Optional
         totalPrice,
-        status: 'place'
+        status: 'place',
       };
 
       // Send orderData to the server
       console.log('Sending order data:', orderData);
       const res = await axios.post('/api/order', orderData);
       console.log(res);
-      
+      if (res) {
+        setOpen(false);
+        toast({
+          title: '주문요청이 접수되었습니다.'
+        });
+        fetchOrders();
+      }
+      // Close the dialog after successful submission
     } catch (error) {
       console.log(error);
-      
     }
   };
 
+  // Check if at least one waffle is selected
+  const isButtonActive = waffleCount.basic > 0 || waffleCount.choco > 0;
+
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button variant="outline">주문요청작성하기</Button>
       </DialogTrigger>
@@ -156,7 +169,11 @@ const CustomDialog = () => {
           <div className="text-lg font-semibold">
             총 금액: {totalPrice.toLocaleString()} 원
           </div>
-          <CustomConfirm title={'주문요청전송'} handleSubmit={handleSubmit} />
+          <CustomConfirm
+            title={'주문요청전송'}
+            handleSubmit={handleSubmit}
+            isDisabled={!isButtonActive} // Disable button if no waffle is selected
+          />
         </DialogFooter>
       </DialogContent>
     </Dialog>
