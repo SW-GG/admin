@@ -125,7 +125,7 @@ export default function Home() {
             activeStatus={activeButton}
             fetchOrders={fetchOrders}
           />
-          <PaginationDemo totalItems={tableData?.length} itemsPerPage={1} />
+          {/* <PaginationDemo totalItems={tableData?.length} itemsPerPage={1} /> */}
         </div>
       )}
       {/* 데이터가 없을 경우 */}
