@@ -29,7 +29,7 @@ export async function GET(req) {
     const { data, error, status: dbStatus, statusText } = await query;
 
     if (error) {
-      return NextResponse.json({ status: dbStatus, msg: statusText });
+      return NextResponse.json({ statusCode: dbStatus, msg: statusText });
     }
 
     // Convert the created_at field to KST (Korean Standard Time)
@@ -43,7 +43,20 @@ export async function GET(req) {
       return order;
     });
 
-    return NextResponse.json(updatedData);
+    // 총 가격 계산
+    const totalPrice = updatedData.reduce(
+      (sum, order) => sum + order.totalPrice,
+      0
+    );
+    const totalCount = updatedData.length;
+
+    // 요청된 형태로 응답 반환
+    return NextResponse.json({
+      datas: updatedData,
+      statusCode: dbStatus,
+      totalCount: totalCount,
+      totalPrice: totalPrice,
+    });
   } catch (err) {
     return new NextResponse(JSON.stringify({ error: err.message }), {
       status: 500,
@@ -53,6 +66,7 @@ export async function GET(req) {
     });
   }
 }
+
 
 
 

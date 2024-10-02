@@ -39,7 +39,9 @@ export default function Home() {
           date: selectedDate,
         },
       });
+      console.log(res);
       if (res) {
+        
         setTableData(res.data);
       }
     } catch (error) {
@@ -65,7 +67,7 @@ export default function Home() {
     <div className="p-8 bg-background min-h-screen">
       {/* Dialog */}
       <div className="flex justify-center">
-        <CustomDialog fetchOrders ={fetchOrders}/>
+        <CustomDialog fetchOrders={fetchOrders} />
       </div>
 
       {/* Flexbox section */}
@@ -112,25 +114,25 @@ export default function Home() {
 
       {/* Table */}
       {isLoading && (
-        <div class="flex justify-center h-screen">
+        <div className="flex justify-center h-screen">
           <div className="text-center">
             <PulseLoader />
           </div>
         </div>
       )}
-      {!isLoading && tableData?.length > 0 && (
+      {!isLoading && tableData?.totalCount > 0 && (
         <div className="pt-8">
           <CustomTable
             tableBody={tableData}
             activeStatus={activeButton}
             fetchOrders={fetchOrders}
           />
-          {/* <PaginationDemo totalItems={tableData?.length} itemsPerPage={1} /> */}
+          <PaginationDemo totalItems={tableData?.totalCount} itemsPerPage={10} />
         </div>
       )}
       {/* 데이터가 없을 경우 */}
-      {tableData?.length === 0 && (
-        <div class="flex justify-center h-screen pt-8">
+      {tableData?.totalCount === 0 && (
+        <div className="flex justify-center h-screen pt-8">
           <div className="text-center">
             <Image
               src="https://sw-gg.github.io/static-image/no-waffle.webp"

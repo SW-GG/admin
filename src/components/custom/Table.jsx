@@ -27,7 +27,7 @@ export function CustomTable({ tableBody, activeStatus, fetchOrders }) {
   const handleCloseDialog = () => {
     setOpen(false); // 다이얼로그 닫기
   };
-  const totalSum = tableBody?.reduce((sum, row) => sum + row.totalPrice, 0);
+  
   const updateStatus = async () => {
     try {
       // activeStatus 변수에 의해서 status값을 자동으로 치환한다.
@@ -70,7 +70,7 @@ export function CustomTable({ tableBody, activeStatus, fetchOrders }) {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {tableBody?.map((row) => (
+        {tableBody?.datas?.map((row) => (
           <TableRow
             key={row.id}
             onClick={() => {
@@ -94,7 +94,7 @@ export function CustomTable({ tableBody, activeStatus, fetchOrders }) {
         <TableFooter>
           <TableRow>
             <TableCell colSpan={6}>Total</TableCell>
-            <TableCell className="text-right">{totalSum}원</TableCell>
+            <TableCell className="text-right">{tableBody?.totalPrice}원</TableCell>
           </TableRow>
         </TableFooter>
       )}
