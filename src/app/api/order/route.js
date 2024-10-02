@@ -6,8 +6,39 @@ export async function GET(req) {
     const { searchParams } = new URL(req.url);
     const status = searchParams.get('status'); // 쿼리에서 status 가져오기
     const date = searchParams.get('date'); // 쿼리에서 date 가져오기
+    const page = parseInt(searchParams.get('page')) || 1; // 페이지 번호, 기본값 1
+    const itemsPerPage = 10; // 한 페이지당 보여줄 데이터 수
 
-    // supabase 쿼리 빌드
+    // 1. 전체 총 가격과 총 데이터 수를 계산하는 쿼리 (날짜와 상태로 필터링)
+    let totalQuery = supabase
+      .from('order')
+      .select('totalPrice', { count: 'exact' });
+
+    // status 필터링 적용
+    if (status) {
+      totalQuery = totalQuery.eq('status', status);
+    }
+
+    // 날짜 필터링 적용
+    if (date) {
+      totalQuery = totalQuery
+        .gte('created_at', `${date} 00:00:00`)
+        .lte('created_at', `${date} 23:59:59`);
+    }
+
+    // 총 가격과 데이터 개수 가져오기
+    const { data: totalData, count, error: totalError } = await totalQuery;
+    if (totalError) {
+      return NextResponse.json({ statusCode: 500, msg: totalError.message });
+    }
+
+    // 총 가격 계산
+    const totalPrice = totalData.reduce(
+      (sum, order) => sum + order.totalPrice,
+      0
+    );
+
+    // 2. 페이지네이션을 적용한 쿼리
     let query = supabase.from('order').select('*');
 
     // status 필터링 적용
@@ -15,7 +46,7 @@ export async function GET(req) {
       query = query.eq('status', status);
     }
 
-    // 날짜 필터링 적용 (created_at 날짜가 쿼리의 날짜와 같은지 확인)
+    // 날짜 필터링 적용
     if (date) {
       query = query
         .gte('created_at', `${date} 00:00:00`)
@@ -25,7 +56,12 @@ export async function GET(req) {
     // 주문 번호(id)를 기준으로 오름차순 정렬 추가
     query = query.order('id', { ascending: true });
 
-    // 데이터 가져오기
+    // 페이지네이션 적용 (limit과 range를 사용하여 필요한 범위의 데이터만 가져오기)
+    const from = (page - 1) * itemsPerPage;
+    const to = from + itemsPerPage - 1;
+    query = query.range(from, to);
+
+    // 데이터 가져오기 (현재 페이지 데이터)
     const { data, error, status: dbStatus, statusText } = await query;
 
     if (error) {
@@ -43,19 +79,14 @@ export async function GET(req) {
       return order;
     });
 
-    // 총 가격 계산
-    const totalPrice = updatedData.reduce(
-      (sum, order) => sum + order.totalPrice,
-      0
-    );
-    const totalCount = updatedData.length;
-
     // 요청된 형태로 응답 반환
     return NextResponse.json({
-      datas: updatedData,
+      datas: updatedData, // 현재 페이지 데이터
       statusCode: dbStatus,
-      totalCount: totalCount,
-      totalPrice: totalPrice,
+      totalCount: count, // 전체 데이터 개수
+      totalPrice: totalPrice, // 해당 날짜의 총 가격
+      currentPage: page, // 현재 페이지
+      itemsPerPage: itemsPerPage, // 페이지당 아이템 수
     });
   } catch (err) {
     return new NextResponse(JSON.stringify({ error: err.message }), {
@@ -66,6 +97,9 @@ export async function GET(req) {
     });
   }
 }
+
+
+
 
 
 

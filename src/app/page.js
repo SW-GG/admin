@@ -6,7 +6,7 @@ import { CustomTable } from '@/components/custom/Table';
 import axios from 'axios';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
-import { PulseLoader, RingLoader } from 'react-spinners';
+import { PulseLoader } from 'react-spinners';
 
 export default function Home() {
   const [activeButton, setActiveButton] = useState('주문요청');
@@ -23,7 +23,10 @@ export default function Home() {
   );
 
   const [isLoading, setIsLoading] = useState(false);
-  const fetchOrders = async () => {
+  const [currentPage, setCurrentPage] = useState(1); // 페이지 번호 상태 추가
+
+  // fetchOrders 함수 수정: 페이지 번호를 파라미터로 전달
+  const fetchOrders = async (page = 1) => {
     setIsLoading(true);
     try {
       const res = await axios.get('/api/order', {
@@ -37,12 +40,11 @@ export default function Home() {
               ? 'complete'
               : 'place',
           date: selectedDate,
+          page: page, // 페이지 번호 전달
         },
       });
-      console.log(res);
       if (res) {
-        
-        setTableData(res.data);
+        setTableData(res.data); // API에서 받은 데이터를 테이블에 설정
       }
     } catch (error) {
       console.error(error);
@@ -51,16 +53,26 @@ export default function Home() {
     }
   };
 
+  // 페이지 번호나 버튼, 날짜가 바뀌면 데이터를 다시 가져옴
   useEffect(() => {
-    fetchOrders();
-  }, [activeButton, selectedDate]); // 날짜나 버튼이 바뀌면 데이터 다시 가져오기
+    fetchOrders(currentPage); // 페이지 번호가 변경될 때마다 호출
+  }, [activeButton, selectedDate, currentPage]);
 
+  // 버튼 클릭 시 페이지 번호를 1로 리셋
   const handleButtonClick = (buttonType) => {
     setActiveButton(buttonType);
+    setCurrentPage(1); // 버튼 클릭 시 페이지를 첫 페이지로 설정
   };
 
+  // 날짜 변경 핸들러
   const handleDateChange = (newDate) => {
     setSelectedDate(newDate); // 날짜가 바뀌면 상태 업데이트
+    setCurrentPage(1); // 날짜 변경 시 첫 페이지로 이동
+  };
+
+  // 페이지 변경 핸들러
+  const handlePageChange = (page) => {
+    setCurrentPage(page); // 페이지가 변경될 때 상태 업데이트
   };
 
   return (
@@ -127,7 +139,13 @@ export default function Home() {
             activeStatus={activeButton}
             fetchOrders={fetchOrders}
           />
-          <PaginationDemo totalItems={tableData?.totalCount} itemsPerPage={10} />
+          {/* PaginationDemo에 페이지 변경 핸들러 전달 */}
+          <PaginationDemo
+            totalItems={tableData?.totalCount}
+            itemsPerPage={10}
+            currentPage={currentPage}
+            onPageChange={handlePageChange} // 페이지 변경 핸들러
+          />
         </div>
       )}
       {/* 데이터가 없을 경우 */}

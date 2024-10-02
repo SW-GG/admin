@@ -1,24 +1,26 @@
 import {
   Pagination,
   PaginationContent,
-  PaginationEllipsis,
   PaginationItem,
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
 } from '@/components/ui/pagination';
-import { useState } from 'react';
 
-export function PaginationDemo({ totalItems, itemsPerPage }) {
-  const [currentPage, setCurrentPage] = useState(1);
-
+export function PaginationDemo({
+  totalItems,
+  itemsPerPage,
+  currentPage,
+  onPageChange,
+}) {
   // 총 페이지 수 계산
   const totalPages = Math.ceil(totalItems / itemsPerPage);
-
+  console.log(totalItems,itemsPerPage, currentPage,'paging');
+  
   // 페이지 변경 핸들러
   const handlePageChange = (page) => {
-    setCurrentPage(page);
-    console.log(`현재 페이지: ${page}`);
+    if (page < 1 || page > totalPages) return; // 페이지 범위를 벗어나면 무시
+    onPageChange(page); // 상위 컴포넌트로 페이지 변경을 알림
   };
 
   // 이전 페이지로 이동
@@ -65,7 +67,6 @@ export function PaginationDemo({ totalItems, itemsPerPage }) {
         <PaginationItem>
           <PaginationPrevious href="#" onClick={handlePreviousPage} />
         </PaginationItem>
-
         {renderPageLinks()}
 
         <PaginationItem>
