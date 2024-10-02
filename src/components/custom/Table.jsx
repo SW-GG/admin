@@ -84,7 +84,7 @@ export function CustomTable({ tableBody, activeStatus, fetchOrders }) {
             <TableCell>{row.basicWaffleCount}개</TableCell>
             <TableCell>{row.chocoWaffleCount}개</TableCell>
             <TableCell>{row.phoneNumber}</TableCell>
-            <TableCell>{row.memo ? row.memo : '요청사항없음'}</TableCell>
+            <TableCell>{row.memo ? row.memo : '-'}</TableCell>
             <TableCell>{row.created_at}</TableCell>
             <TableCell className="text-right">{row.totalPrice}원</TableCell>
           </TableRow>

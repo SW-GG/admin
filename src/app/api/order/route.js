@@ -22,6 +22,9 @@ export async function GET(req) {
         .lte('created_at', `${date} 23:59:59`);
     }
 
+    // 주문 번호(id)를 기준으로 오름차순 정렬 추가
+    query = query.order('id', { ascending: true });
+
     // 데이터 가져오기
     const { data, error, status: dbStatus, statusText } = await query;
 
@@ -50,6 +53,7 @@ export async function GET(req) {
     });
   }
 }
+
 
 
 export async function POST(request) {
