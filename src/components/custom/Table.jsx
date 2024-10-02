@@ -55,6 +55,14 @@ export function CustomTable({ tableBody, activeStatus, fetchOrders }) {
       
     }
   };
+
+  const formatTime = (dateString) => {
+    const date = new Date(dateString); // 문자열을 Date 객체로 변환
+    const hours = date.getHours(); // 시(HH) 가져오기
+    const minutes = date.getMinutes(); // 분(MM) 가져오기
+    return `${hours}시${minutes.toString().padStart(2, '0')}분`; // "HH시MM분" 형식으로 반환
+  };
+
   return (
     <Table>
       <TableCaption>와플 {activeStatus} 내역입니다.</TableCaption>
@@ -65,7 +73,7 @@ export function CustomTable({ tableBody, activeStatus, fetchOrders }) {
           <TableHead>초코 와플</TableHead>
           <TableHead>전화번호</TableHead>
           <TableHead>요청사항</TableHead>
-          <TableHead>주문날짜</TableHead>
+          <TableHead>주문시간</TableHead>
           <TableHead className="text-right">지불 금액</TableHead>
         </TableRow>
       </TableHeader>
@@ -85,7 +93,7 @@ export function CustomTable({ tableBody, activeStatus, fetchOrders }) {
             <TableCell>{row.chocoWaffleCount}개</TableCell>
             <TableCell>{row.phoneNumber ? row.phoneNumber : '-'}</TableCell>
             <TableCell>{row.memo ? row.memo : '-'}</TableCell>
-            <TableCell>{row.created_at}</TableCell>
+            <TableCell>{formatTime(row.created_at)}</TableCell>
             <TableCell className="text-right">{row.totalPrice}원</TableCell>
           </TableRow>
         ))}
@@ -94,7 +102,9 @@ export function CustomTable({ tableBody, activeStatus, fetchOrders }) {
         <TableFooter>
           <TableRow>
             <TableCell colSpan={6}>Total</TableCell>
-            <TableCell className="text-right">{tableBody?.totalPrice}원</TableCell>
+            <TableCell className="text-right">
+              {tableBody?.totalPrice}원
+            </TableCell>
           </TableRow>
         </TableFooter>
       )}
