@@ -83,7 +83,7 @@ export function CustomTable({ tableBody, activeStatus, fetchOrders }) {
             <TableCell className="font-medium">{row.id}</TableCell>
             <TableCell>{row.basicWaffleCount}개</TableCell>
             <TableCell>{row.chocoWaffleCount}개</TableCell>
-            <TableCell>{row.phoneNumber}</TableCell>
+            <TableCell>{row.phoneNumber ? row.phoneNumber : '-'}</TableCell>
             <TableCell>{row.memo ? row.memo : '-'}</TableCell>
             <TableCell>{row.created_at}</TableCell>
             <TableCell className="text-right">{row.totalPrice}원</TableCell>
