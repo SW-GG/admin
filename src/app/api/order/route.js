@@ -1,5 +1,6 @@
 // app/api/order/route.js
 import { supabase } from '@/lib/supabase'; // Supabase 클라이언트를 가져옵니다.
+import { equal } from 'assert';
 import { NextRequest, NextResponse } from 'next/server';
 export async function GET(req) {
   try {
@@ -100,10 +101,6 @@ export async function GET(req) {
 
 
 
-
-
-
-
 export async function POST(request) {
   // JSON 형식의 바디 데이터 파싱
   const body = await request.json();
@@ -148,6 +145,8 @@ export async function POST(request) {
 }
 
 
+
+
 export async function PUT(request) {
   // JSON 형식의 바디 데이터 파싱
   const body = await request.json();
@@ -171,7 +170,6 @@ export async function PUT(request) {
     .from('order')
     .update({ status })
     .eq('id', id);
-
   // 오류 처리
   if (error) {
     return new NextResponse(JSON.stringify({ error: error.message }), {

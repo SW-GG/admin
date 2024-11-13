@@ -1,36 +1,40 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🧇 Waffle Order Management System
 
-## Getting Started
+## 📝 Project Description
+와플 주문을 관리하는 웹 애플리케이션입니다. 주문 요청, 주문 대기, 주문 완료 상태를 관리하고 실시간으로 주문 현황을 모니터링할 수 있습니다.
 
-First, run the development server:
+## ✨ Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+### 주문 관리
+- 주문 상태별 필터링 (주문요청/주문대기중/주문완료)
+- 날짜별 주문 조회
+- 페이지네이션
+- 주문 상태 변경
+- 실시간 주문 현황 모니터링
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 주문 기능
+- 기본 와플 / 초코 와플 수량 선택
+- 전화번호 입력
+- 요청사항 메모
+- 총 금액 자동 계산
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+### 기타 기능
+- 토스트 알림
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🛠 Tech Stack
 
-## Learn More
+### Frontend
+- **Next.js** (v14.2.13)
+- **React** (v18)
+- **JavaScript**
+- **Tailwind CSS**
 
-To learn more about Next.js, take a look at the following resources:
+### Backend
+- **Supabase** (Backend as a Service)
+- **PostgreSQL** (Database)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### API
+- **REST API**
+- **Next.js API Routes**
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 🏗 Project Structure
